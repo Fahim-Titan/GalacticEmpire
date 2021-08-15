@@ -1,0 +1,22 @@
+version: "3.9"
+services:
+  service1:
+    build: ./service1
+    ports: 
+      - "42410:8080"
+  service2:
+    build: ./service2
+    ports: 
+      - "42420:8080"
+  service3:
+    build: ./service3
+    ports: 
+      - "42430:8080"
+  service4:
+    build: ./service4
+    ports:
+      - "42440:8080"
+  service5:
+    build: ./service5
+    ports: 
+      - "42450:8080"
