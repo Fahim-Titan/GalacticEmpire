@@ -70,3 +70,83 @@ services:
 - Now run in the cmd to build the docker image altogether -> `docker-compose build`
 - This should build the container image nicely.
 - Run the cmd to run the docker images -> `docker compose up`
+
+#### Adding NGINX
+- To add NGINX, we will create another container.
+- the setup is fairly simple.
+- Create a new folder called 'nginx'
+- create a dockerfile in there and paste this code 
+```
+FROM nginx
+
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/conf.d
+
+EXPOSE 8888
+```
+- In here we used the nginx container which comes with nginx installed 
+- In nginx all the configurations are stored in the conf.d folder. All we had to do is store our configuration file in that folder.
+- There is already a file called default.conf which we removed and pasted our file that is called nginx.conf
+- the nginx.conf file holds this code below
+```nginx
+server {
+    listen 8888;
+    server_name localhost;
+
+    location / {
+        proxy_pass http://service4:8080/;
+        proxy_redirect    default;
+        proxy_set_header  Host $host;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Host $server_name;
+    }
+
+    location /service2/ {
+        proxy_pass http://service2:8081/;
+        proxy_redirect    default;
+        proxy_set_header  Host $host;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Host $server_name;
+    }
+    
+    location /service3/ {
+        proxy_pass http://service3:8080/;
+        proxy_redirect    default;
+        proxy_set_header  Host $host;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Host $server_name;
+    }
+
+    location /service4/ {
+        proxy_pass http://service4:8080/;
+        proxy_redirect    default;
+        proxy_set_header  Host $host;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Host $server_name;
+    }
+
+    location /service5/ {
+        proxy_pass http://service5:8080/;
+        proxy_redirect    default;
+        proxy_set_header  Host $host;
+        proxy_set_header  X-Real-IP $remote_addr;
+        proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header  X-Forwarded-Host $server_name;
+    }
+}
+```
+- *Some Notes Below*
+    - We can create multiple Nginx server by using the server block. But we chose to use only one nginx server.
+    - the keyword `listen` means that the server will be reachable through that port.
+    - Not sure about the server_name significanse
+    - the `location` is the main part of the nginx conf right now.
+    - whenever the nginx server gets a request it tries to match the URL with this location.
+    - the location is actually a regex (need to verify!)
+    - So after it matches the URL and if matched it proxy pass that request
+    - The reason we are proxy calling the service using their name ('service1:8080', 'service2:8080') instead of localhost is because, docker puts each container in their own environment and each of the environment can be accesseble from another through their own network. Docker by default make their network discoverable.
+    - **NOTE:** *Make sure to add a trailing slash (/) at the end of each location. Otherwise it will not remove the matching part while proxy forwarding.*
+    

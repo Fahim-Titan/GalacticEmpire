@@ -7,7 +7,7 @@ services:
   service2:
     build: ./service2
     ports: 
-      - "42420:8080"
+      - "42420:8081"
   service3:
     build: ./service3
     ports: 
@@ -20,3 +20,7 @@ services:
     build: ./service5
     ports: 
       - "42450:8080"
+  nginx:
+    build: ./nginx
+    ports: 
+      - "8888:8888"
