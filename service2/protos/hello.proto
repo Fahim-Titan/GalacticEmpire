@@ -1,0 +1,18 @@
+syntax = "proto3";
+package hello;
+
+service StatusReport {
+    rpc GetStatusReport (HelloRequest) returns (HelloReply) {}
+}
+
+
+message HelloRequest {
+    string isActive = 1;
+    string serviceFrom = 2;
+    string serviceTo = 3;
+};
+
+message HelloReply {
+    string isActive = 1;
+    string message = 2;
+};
